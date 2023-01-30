@@ -5,13 +5,15 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
+    private float rotationVelocity;
+    [SerializeField]
     private float velocity;
 
     [SerializeField]
     private float jumpForce;
 
     private bool grounded;
-    bool rotate;
+    public bool rotate;
     public Vector3 myCenterOfMass;
     Vector3 m_EulerAngleVelocity;
     public Rigidbody myRb;
@@ -24,28 +26,27 @@ public class PlayerController : MonoBehaviour
         grounded = true;
 
 
-        m_EulerAngleVelocity = new Vector3(0, 0, 10);
+        m_EulerAngleVelocity = new Vector3(0, 0, rotationVelocity);
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        //myRb.centerOfMass = myCenterOfMass;
+        if (Input.GetMouseButtonDown(0))
         {
             if (myRb.IsSleeping())
                 myRb.WakeUp();
 
             myRb.velocity = new Vector3(myRb.velocity.x, jumpForce, myRb.velocity.z);
+            myRb.velocity = new Vector3(myRb.velocity.x, myRb.velocity.y, velocity);
+
+
 
             rotate = true;
         }
 
-        if (rotate)
-        {
-            Quaternion deltaRotation = Quaternion.Euler(m_EulerAngleVelocity * Time.fixedDeltaTime);
-            myRb.MoveRotation(myRb.rotation * deltaRotation);
-        }
+
 
     }
 
@@ -53,8 +54,13 @@ public class PlayerController : MonoBehaviour
     {
         if (!grounded)
         {
-            transform.Translate(Vector3.forward * velocity * Time.deltaTime, Space.World);
+            //transform.Translate(Vector3.forward * velocity * Time.deltaTime, Space.World);
 
+        }
+        if (rotate)
+        {
+            Quaternion deltaRotation = Quaternion.Euler(m_EulerAngleVelocity * Time.deltaTime);
+            myRb.MoveRotation(myRb.rotation * deltaRotation);
         }
     }
 

@@ -7,8 +7,8 @@ public class CameraFollow : MonoBehaviour
     [SerializeField]
     private Vector3 followOffset;
 
-    Vector3 currentPosition;
-    Vector3 futurePosition;
+    //Vector3 currentPosition;
+    //Vector3 futurePosition;
     public Transform objToFollow;
 
     // Start is called before the first frame update
@@ -21,9 +21,8 @@ public class CameraFollow : MonoBehaviour
     void Update()
     {
 
-        currentPosition = transform.position;
-        futurePosition = Vector3.Lerp(currentPosition, objToFollow.position, 1f);
+        
 
-        transform.position = futurePosition + followOffset;
+        transform.position = objToFollow.position + followOffset;
     }
 }
