@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
     bool rotate;
     public Vector3 myCenterOfMass;
     Vector3 m_EulerAngleVelocity;
-    private Rigidbody myRb;
+    public Rigidbody myRb;
     // Start is called before the first frame update
     void Awake()
     {
@@ -23,8 +23,8 @@ public class PlayerController : MonoBehaviour
         myRb.Sleep();
         grounded = true;
 
-        
-        m_EulerAngleVelocity = new Vector3(0, 0, 90);
+
+        m_EulerAngleVelocity = new Vector3(0, 0, 10);
     }
 
     // Update is called once per frame
