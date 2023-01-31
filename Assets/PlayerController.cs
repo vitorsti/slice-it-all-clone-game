@@ -6,10 +6,9 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField]
     private float rotationSpeedNormal;
+
     [SerializeField]
-    private float rotationSpeedSlow;
-    [SerializeField]
-    private float velocity;
+    private float speed;
     [SerializeField]
     private float knockBackForce;
     [SerializeField]
@@ -18,12 +17,13 @@ public class PlayerController : MonoBehaviour
     private bool grounded;
     public bool rotate;
     public Vector3 myCenterOfMass;
+    float lerpDuration = 0.5f;
 
     public Rigidbody myRb;
     public MeshRenderer myMr;
     public Material defaultMaterial, knockBackEffectMaterial;
 
-    public GameObject detector;
+
 
 
     RigidbodyConstraints defaultConstrains;
@@ -32,32 +32,23 @@ public class PlayerController : MonoBehaviour
     {
         myRb = GetComponent<Rigidbody>();
         myMr = GetComponent<MeshRenderer>();
-        //myRb.centerOfMass = myCenterOfMass;
-        myRb.Sleep();
-        grounded = true;
 
-        defaultConstrains = myRb.constraints;
+        myRb.Sleep();
+
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (detector != null)
-        {
-            detector.transform.position = transform.position;
-            //detector.transform.rotation = Quaternion.identity;
-        }
+
 
         if (Input.GetMouseButtonDown(0))
         {
-
             Move();
+            //StartCoroutine(Rotation());
             Rotate();
-
         }
-
-        
     }
 
 
@@ -66,24 +57,32 @@ public class PlayerController : MonoBehaviour
         if (myRb.IsSleeping())
             myRb.WakeUp();
 
-        myRb.velocity = new Vector3(myRb.velocity.x, jumpForce, myRb.velocity.z);
-        myRb.velocity = new Vector3(myRb.velocity.x, myRb.velocity.y, velocity);
-        //myRb.centerOfMass = myCenterOfMass;
+        myRb.velocity = Vector3.zero;
+        myRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        myRb.AddForce(Vector3.forward * speed, ForceMode.Impulse);
     }
 
     public void Rotate()
     {
-       myRb.angularVelocity = Vector3.zero;
-        Vector3 anlgeVelocity = new Vector3(rotationSpeedNormal, 0, 0);
-        myRb.AddTorque(anlgeVelocity, ForceMode.Acceleration);
+        myRb.angularVelocity = Vector3.zero;
+        Vector3 angleVelocity = new Vector3(rotationSpeedNormal, 0, 0);
+        myRb.AddTorque(angleVelocity, ForceMode.Force);
 
+    }
+
+    public void StopRotation()
+    {
+        myRb.angularVelocity = Vector3.zero;
     }
 
     public void ApplyKnockBackForce()
     {
-        //myRb.velocity = Vector3.zero;
-        //myRb.AddForce(Vector3.back * knockBackForce, ForceMode.Force);
-        myRb.velocity = new Vector3(myRb.velocity.x, myRb.velocity.y, -knockBackForce);
+
+        //
+        myRb.velocity = Vector3.zero;
+        myRb.AddForce(Vector3.back * knockBackForce, ForceMode.Impulse);
+
+        //myRb.velocity = new Vector3(myRb.velocity.x, myRb.velocity.y, -knockBackForce);
 
         KnockBackEffect();
     }
@@ -99,6 +98,22 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(0.1f);
         myMr.material = defaultMaterial;
+    }
+
+    IEnumerator Rotation()
+    {
+
+        float timeElapsed = 0;
+        //Quaternion startRotation = transform.rotation;
+        Quaternion targetRotation = transform.rotation * Quaternion.Euler(0, 0, 80);
+        while (timeElapsed < lerpDuration)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, timeElapsed / lerpDuration);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.rotation = targetRotation;
+
     }
     private void OnDrawGizmos()
     {
@@ -124,4 +139,5 @@ public class PlayerController : MonoBehaviour
             grounded = false;
         }
     }
+
 }

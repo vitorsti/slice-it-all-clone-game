@@ -5,7 +5,7 @@ using UnityEngine;
 public class KnifeColliderBehavior : MonoBehaviour
 {
     public PlayerController player;
-    public float playerMass;
+    //public float playerMass;
     public enum KnifeCollider { Blade, Handle };
     public KnifeCollider knifeCollider;
 
@@ -27,18 +27,15 @@ public class KnifeColliderBehavior : MonoBehaviour
             case KnifeCollider.Blade:
                 if (other.gameObject.tag == "Cut")
                 {
-                    //player.myRb.velocity = Vector3.zero;
-                    //player.rotate = false;
-                    //player.myRb.angularVelocity = Vector3.zero;
-                    //player.myRb.mass = 10;
+                    player.myRb.velocity = new Vector3(0, player.myRb.velocity.y, 0);
+                    player.StopRotation();
                     Destroy(other.gameObject);
                 }
                 
                 break;
             case KnifeCollider.Handle:
                 player.ApplyKnockBackForce();
-                player.myRb.angularVelocity = Vector3.zero;
-                player.KnockBackEffect();
+                //player.myRb.angularVelocity = Vector3.zero;
                 break;
         }
     }
@@ -50,7 +47,7 @@ public class KnifeColliderBehavior : MonoBehaviour
             case KnifeCollider.Blade:
                 if (other.gameObject.tag == "Cut")
                 {
-
+                    
 
                 }
                 break;
