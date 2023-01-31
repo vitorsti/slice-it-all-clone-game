@@ -12,7 +12,7 @@ public class KnifeColliderBehavior : MonoBehaviour
     private void Awake()
     {
         player = GetComponentInParent<PlayerController>();
-        
+
     }
 
     private void Start()
@@ -25,16 +25,20 @@ public class KnifeColliderBehavior : MonoBehaviour
         switch (knifeCollider)
         {
             case KnifeCollider.Blade:
-                if(other.gameObject.tag == "Cut")
+                if (other.gameObject.tag == "Cut")
                 {
-                    player.myRb.velocity = Vector3.zero;
-                    player.rotate = false;
-                    player.myRb.angularVelocity = Vector3.zero;
+                    //player.myRb.velocity = Vector3.zero;
+                    //player.rotate = false;
+                    //player.myRb.angularVelocity = Vector3.zero;
                     //player.myRb.mass = 10;
                     Destroy(other.gameObject);
                 }
+                
                 break;
             case KnifeCollider.Handle:
+                player.ApplyKnockBackForce();
+                player.myRb.angularVelocity = Vector3.zero;
+                player.KnockBackEffect();
                 break;
         }
     }
@@ -46,11 +50,12 @@ public class KnifeColliderBehavior : MonoBehaviour
             case KnifeCollider.Blade:
                 if (other.gameObject.tag == "Cut")
                 {
-                   
-                    //player.myRb.mass = playerMass;
+
+
                 }
                 break;
             case KnifeCollider.Handle:
+
                 break;
         }
     }
