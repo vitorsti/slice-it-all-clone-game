@@ -6,6 +6,8 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField]
     private float rotationSpeedNormal;
+    [SerializeField]
+    private float rotationSpeedSlow;
 
     [SerializeField]
     private float speed;
@@ -23,10 +25,10 @@ public class PlayerController : MonoBehaviour
     public MeshRenderer myMr;
     public Material defaultMaterial, knockBackEffectMaterial;
 
+    [Header("Debugger")]
+    public bool stopRotation;
+    public bool stopMovement;
 
-
-
-    RigidbodyConstraints defaultConstrains;
     // Start is called before the first frame update
     void Awake()
     {
@@ -41,13 +43,33 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Debug.LogError(transform.eulerAngles.z);
 
+        if (rotate)
+        {
+            if (transform.eulerAngles.z > -10.0f && transform.eulerAngles.z < 5.0f || transform.eulerAngles.z > 150 && transform.eulerAngles.z < 5.0f)
+            {
+                //Debug.Log("hello");
+                SlowRotate();
+            }
+            /*/if (transform.eulerAngles.z > 90f)
+            {
+                Rotate();
+            }*/
+
+        }
 
         if (Input.GetMouseButtonDown(0))
         {
-            Move();
+            if (!stopMovement)
+            {
+                Move();
+            }
             //StartCoroutine(Rotation());
-            Rotate();
+            if (!stopRotation)
+            {
+                Rotate();
+            }
         }
     }
 
@@ -64,16 +86,26 @@ public class PlayerController : MonoBehaviour
 
     public void Rotate()
     {
+        rotate = true;
         myRb.angularVelocity = Vector3.zero;
         Vector3 angleVelocity = new Vector3(rotationSpeedNormal, 0, 0);
         myRb.AddTorque(angleVelocity, ForceMode.Force);
 
     }
 
-    public void StopRotation()
+    public void SlowRotate()
+    {
+        //Debug.Log("passou aqui");
+        myRb.angularVelocity = Vector3.zero;
+        Vector3 angleVelocity = new Vector3(rotationSpeedSlow, 0, 0);
+        myRb.AddTorque(angleVelocity, ForceMode.Force);
+
+    }
+
+    /*public void StopRotation()
     {
         myRb.angularVelocity = Vector3.zero;
-    }
+    }*/
 
     public void ApplyKnockBackForce()
     {

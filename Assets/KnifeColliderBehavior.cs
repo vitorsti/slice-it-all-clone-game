@@ -28,8 +28,7 @@ public class KnifeColliderBehavior : MonoBehaviour
                 if (other.gameObject.tag == "Cut")
                 {
                     player.myRb.velocity = new Vector3(0, player.myRb.velocity.y, 0);
-                    player.StopRotation();
-                    Destroy(other.gameObject);
+                    other.GetComponent<SplitObject>().CutInHalf();
                 }
                 
                 break;
