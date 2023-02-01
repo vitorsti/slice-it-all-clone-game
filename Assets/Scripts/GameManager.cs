@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -69,6 +70,11 @@ public class GameManager : MonoBehaviour
         Debug.Log("You Win");
     }
 
+    public void RestartButton()
+    {
+        //Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
     public static void AddScore(int scoreToAdd)
     {
         score += scoreToAdd;

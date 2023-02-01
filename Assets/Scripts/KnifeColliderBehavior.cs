@@ -29,18 +29,21 @@ public class KnifeColliderBehavior : MonoBehaviour
                 {
                     player.myRb.velocity = new Vector3(0, player.myRb.velocity.y, 0);
                     other.GetComponent<SplitObject>().CutInHalf();
-                    player.rotate = false;
+                    player.PlayCutAudio();
+                    //player.rotate = false;
                 }
                 if (other.gameObject.tag == "Big Tower")
                 {
                     player.myRb.velocity = new Vector3(0, player.myRb.velocity.y, 0);
                     player.myRb.angularVelocity = Vector3.zero;
                     other.GetComponent<SplitObject>().CutInHalf();
+                    player.PlayCutAudio();
                     player.rotate = false;
                 }
                 break;
             case KnifeCollider.Handle:
                 player.ApplyKnockBackForce();
+                player.PlayCableHitAudio();
                 //player.myRb.angularVelocity = Vector3.zero;
                 break;
         }
