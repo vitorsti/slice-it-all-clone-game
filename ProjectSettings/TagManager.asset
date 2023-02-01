@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Ground
   - Cut
+  - Final
+  - Game Over
+  - Win
+  - Big Tower
   layers:
   - Default
   - TransparentFX

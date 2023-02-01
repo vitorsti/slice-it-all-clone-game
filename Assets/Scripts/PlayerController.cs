@@ -16,18 +16,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float jumpForce;
 
-    private bool grounded;
+    private Touch touch;
+    //private bool grounded;
     public bool rotate;
-    public Vector3 myCenterOfMass;
-    float lerpDuration = 0.5f;
 
     public Rigidbody myRb;
     public MeshRenderer myMr;
     public Material defaultMaterial, knockBackEffectMaterial;
 
+    public GameObject detector;
+
     [Header("Debugger")]
-    public bool stopRotation;
-    public bool stopMovement;
+    [SerializeField]
+    bool stopRotation;
+    [SerializeField]
+    bool stopMovement;
 
     // Start is called before the first frame update
     void Awake()
@@ -37,7 +40,6 @@ public class PlayerController : MonoBehaviour
 
         myRb.Sleep();
 
-
     }
 
     // Update is called once per frame
@@ -45,32 +47,50 @@ public class PlayerController : MonoBehaviour
     {
         //Debug.LogError(transform.eulerAngles.z);
 
-        if (rotate)
-        {
-            if (transform.eulerAngles.z > -10.0f && transform.eulerAngles.z < 5.0f || transform.eulerAngles.z > 150 && transform.eulerAngles.z < 5.0f)
-            {
-                //Debug.Log("hello");
-                SlowRotate();
-            }
-            /*/if (transform.eulerAngles.z > 90f)
-            {
-                Rotate();
-            }*/
-
-        }
-
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             if (!stopMovement)
             {
                 Move();
             }
-            //StartCoroutine(Rotation());
+
             if (!stopRotation)
             {
                 Rotate();
             }
         }
+
+        if (Input.touchCount > 0)
+        {
+            touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Ended)
+            {
+                Move();
+                Rotate();
+            }
+        }
+
+        if (rotate)
+        {
+
+            if (transform.eulerAngles.z > -10.0f && transform.eulerAngles.z < 5.0f || transform.eulerAngles.z > 150 && transform.eulerAngles.z < 5.0f)
+            {
+                Debug.DrawRay(detector.transform.position, detector.transform.forward * 100, Color.red, 0.1f);
+                //Debug.Log("hello");
+                //SlowRotate();
+                RaycastHit hit;
+
+                if (Physics.Raycast(detector.transform.position, detector.transform.forward, out hit, 100))
+                {
+                    //Rotate();
+                    SlowRotate();
+                    //rotate = false;
+                    Debug.Log(hit.transform.name);
+                }
+            }
+        }
+
+
     }
 
 
@@ -99,6 +119,7 @@ public class PlayerController : MonoBehaviour
         myRb.angularVelocity = Vector3.zero;
         Vector3 angleVelocity = new Vector3(rotationSpeedSlow, 0, 0);
         myRb.AddTorque(angleVelocity, ForceMode.Force);
+        //rotate = false;
 
     }
 
@@ -132,35 +153,30 @@ public class PlayerController : MonoBehaviour
         myMr.material = defaultMaterial;
     }
 
-    IEnumerator Rotation()
-    {
-
-        float timeElapsed = 0;
-        //Quaternion startRotation = transform.rotation;
-        Quaternion targetRotation = transform.rotation * Quaternion.Euler(0, 0, 80);
-        while (timeElapsed < lerpDuration)
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, timeElapsed / lerpDuration);
-            timeElapsed += Time.deltaTime;
-            yield return null;
-        }
-        transform.rotation = targetRotation;
-
-    }
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(transform.position + transform.rotation * myCenterOfMass, 0.1f);
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Ground")
         {
-            grounded = true;
+            //grounded = true;
             rotate = false;
             myRb.velocity = Vector3.zero;
             myRb.Sleep();
+        }
+
+        if (other.gameObject.tag == "Game Over")
+        {
+            rotate = false;
+            myRb.velocity = Vector3.zero;
+            myRb.Sleep();
+            GameManager.GameOver();
+        }
+
+        if (other.gameObject.tag == "Win")
+        {
+            rotate = false;
+            myRb.velocity = Vector3.zero;
+            myRb.Sleep();
+            GameManager.Win();
         }
     }
 
@@ -168,8 +184,14 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.tag == "Ground")
         {
-            grounded = false;
+            //grounded = false;
         }
     }
+
+    /*private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(transform.position + transform.rotation * myCenterOfMass, 0.1f);
+    }*/
 
 }
