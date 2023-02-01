@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour
         if (Input.touchCount > 0)
         {
             touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Ended)
+            if (touch.phase == TouchPhase.Began)
             {
                 Move();
                 Rotate();
@@ -105,7 +105,7 @@ public class PlayerController : MonoBehaviour
     }
     public void PlayCableHitAudio()
     {
-       cableHitAs.Play();
+        cableHitAs.Play();
 
     }
 
